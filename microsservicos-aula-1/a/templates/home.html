@@ -34,8 +34,13 @@
                 <strong>R$ 100,00</strong>
               </li>
             </ul>
-            <div class="input-group">
+            <div class="form-group mb-3">
               <input class="form-control" name="coupon" type="text" placeholder="Cupom">
+              <small id="couponHelp" class="form-text text-muted">Opções validas: abc</small>
+            </div>
+            <div class="form-group">
+              <input class="form-control" name="voucher" type="text" placeholder="Vale presentes">
+              <small id="voucherHelp" class="form-text text-muted">Opções validas: 123</small>
             </div>
           </div>
           <div class="col-md-8 order-md-1">
@@ -78,7 +83,7 @@
         </div>
       </form>
     {{ else}}
-      <h4>Resultado da operação: {{ .Status }}</h4>
+      <h4>Resultado da operação: <span class="badge badge-primary">{{ .Status }}</span> {{ .Message }}</h4>
     {{end}}
 
     <footer class="my-5 pt-5 text-muted text-center text-small">

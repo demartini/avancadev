@@ -11,8 +11,10 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 )
 
+// Result ...
 type Result struct {
-	Status string
+	Status  string
+	Message string
 }
 
 func main() {
@@ -23,17 +25,23 @@ func main() {
 func home(w http.ResponseWriter, r *http.Request) {
 	coupon := r.PostFormValue("coupon")
 	ccNumber := r.PostFormValue("ccNumber")
+	voucher := r.PostFormValue("voucher")
 
-	resultCoupon := makeHttpCall("http://localhost:9092", coupon)
+	resultCoupon := makeHTTPCall("http://localhost:9092", coupon, voucher)
 
 	result := Result{Status: "declined"}
 
 	if ccNumber == "1" {
-		result.Status = "approved"
+		result.Status = "valid"
+		result.Message = "approvad"
 	}
 
 	if resultCoupon.Status == "invalid" {
-		result.Status = "invalid coupon"
+		result = resultCoupon
+	}
+
+	if resultCoupon.Status == "valid" {
+		result.Message = resultCoupon.Message
 	}
 
 	jsonData, err := json.Marshal(result)
@@ -44,16 +52,17 @@ func home(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, string(jsonData))
 }
 
-func makeHttpCall(urlMicroservice string, coupon string) Result {
+func makeHTTPCall(urlMicroservice string, coupon string, voucher string) Result {
 	values := url.Values{}
 	values.Add("coupon", coupon)
+	values.Add("voucher", voucher)
 
 	retryClient := retryablehttp.NewClient()
 	retryClient.RetryMax = 5
 
 	res, err := retryClient.PostForm(urlMicroservice, values)
 	if err != nil {
-		result := Result{Status: "Servidor fora do ar!"}
+		result := Result{Message: "Servidor fora do ar!"}
 		return result
 	}
 

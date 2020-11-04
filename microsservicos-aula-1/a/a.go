@@ -11,8 +11,10 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 )
 
+// Result ...
 type Result struct {
-	Status string
+	Status  string
+	Message string
 }
 
 func main() {
@@ -27,23 +29,24 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func process(w http.ResponseWriter, r *http.Request) {
-	result := makeHttpCall("http://localhost:9091", r.FormValue("coupon"), r.FormValue("cc-number"))
+	result := makeHTTPCall("http://localhost:9091", r.FormValue("coupon"), r.FormValue("cc-number"), r.FormValue("voucher"))
 
 	t := template.Must(template.ParseFiles("templates/home.html"))
 	t.Execute(w, result)
 }
 
-func makeHttpCall(urlMicroservice string, coupon string, ccNumber string) Result {
+func makeHTTPCall(urlMicroservice string, coupon string, ccNumber string, voucher string) Result {
 	values := url.Values{}
 	values.Add("coupon", coupon)
 	values.Add("ccNumber", ccNumber)
+	values.Add("voucher", voucher)
 
 	retryClient := retryablehttp.NewClient()
 	retryClient.RetryMax = 5
 
 	res, err := retryClient.PostForm(urlMicroservice, values)
 	if err != nil {
-		result := Result{Status: "Servidor fora do ar!"}
+		result := Result{Message: "Servidor fora do ar!"}
 		return result
 	}
 
