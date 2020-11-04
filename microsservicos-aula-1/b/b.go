@@ -42,9 +42,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, string(jsonData))
 }
 
-
 func makeHttpCall(urlMicroservice string, coupon string) Result {
-
 	values := url.Values{}
 	values.Add("coupon", coupon)
 
@@ -66,5 +64,4 @@ func makeHttpCall(urlMicroservice string, coupon string) Result {
 	json.Unmarshal(data, &result)
 
 	return result
-
 }
