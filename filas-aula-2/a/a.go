@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/joho/godotenv"
-	"github.com/wesleywillians/go-rabbitmq/queue"
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
+	"github.com/wesleywillians/go-rabbitmq/queue"
 )
 
 type Order struct {
@@ -37,7 +38,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func process(w http.ResponseWriter, r *http.Request) {
-
 	coupon := r.PostFormValue("coupon")
 	ccNumber := r.PostFormValue("cc-number")
 

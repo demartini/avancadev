@@ -2,14 +2,15 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/joho/godotenv"
-	uuid "github.com/satori/go.uuid"
-	"github.com/streadway/amqp"
-	"github.com/wesleywillians/go-rabbitmq/queue"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+
+	"github.com/joho/godotenv"
+	uuid "github.com/satori/go.uuid"
+	"github.com/streadway/amqp"
+	"github.com/wesleywillians/go-rabbitmq/queue"
 )
 
 type Result struct {
@@ -54,7 +55,6 @@ func main() {
 }
 
 func process(msg amqp.Delivery) {
-
 	order := NewOrder()
 	json.Unmarshal(msg.Body, &order)
 
@@ -74,7 +74,6 @@ func process(msg amqp.Delivery) {
 }
 
 func makeHttpCall(urlMicroservice string, coupon string) Result {
-
 	values := url.Values{}
 	values.Add("coupon", coupon)
 
@@ -96,5 +95,4 @@ func makeHttpCall(urlMicroservice string, coupon string) Result {
 	json.Unmarshal(data, &result)
 
 	return result
-
 }
