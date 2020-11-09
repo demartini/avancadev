@@ -8,6 +8,8 @@
     - [Processed](#processed)
     - [Invalid](#invalid)
     - [Connection Error](#connection-error)
+- [Challenge #3](#challenge-3)
+    - [Microservice with Docker](#microservice-with-docker)
 
 ## Challenge #1
 
@@ -25,3 +27,11 @@
 
 #### Connection Error
 ![connection-error](.github/assets/connection-error.png)
+
+## Challenge #3
+
+#### Microservice with Docker
+- [Microservice A](https://hub.docker.com/r/demartini/avancadev-microservice-a)
+- [Microservice B](https://hub.docker.com/r/demartini/avancadev-microservice-b)
+- [Microservice C](https://hub.docker.com/r/demartini/avancadev-microservice-c)
+- [docker-compose](docker-aula-4/docker-compose.yml)
