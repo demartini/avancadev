@@ -1,0 +1,88 @@
+version: '3'
+
+services:
+  # @ANCHOR - RabbitMQ
+  # https://hub.docker.com/_/rabbitmq
+  rabbit:
+    image: rabbitmq:3-management
+    container_name: rabbit
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'SWQOKODSQALRPCLNMEQG'
+      RABBITMQ_DEFAULT_USER: 'rabbitmq'
+      RABBITMQ_DEFAULT_PASS: 'rabbitmq'
+      RABBITMQ_DEFAULT_VHOST: '/'
+    volumes:
+      - ./rabbit/definitions.json:/opt/definitions.json:ro
+      - ./rabbit/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - rabbit:/var/lib/rabbitmq
+
+  # @ANCHOR - AvançaDev - Microservice A
+  # https://hub.docker.com/r/demartini/avancadev-microservice-a
+  microservice-a:
+    image: demartini/avancadev-microservice-a
+    container_name: microservice-a
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 9090:9090
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_HOST: rabbit
+      RABBITMQ_DEFAULT_PORT: 5672
+      RABBITMQ_DEFAULT_VHOST: /
+      RABBITMQ_CONSUMER_NAME:
+      RABBITMQ_CONSUMER_QUEUE_NAME:
+      RABBITMQ_NOTIFICATION_EX: amq.direct
+      RABBITMQ_NOTIFICATION_ROUTING_KEY:
+      RABBITMQ_DLX: dlx
+    depends_on:
+      - rabbit
+
+  # @ANCHOR - AvançaDev - Microservice B
+  # https://hub.docker.com/r/demartini/avancadev-microservice-b
+  microservice-b:
+    image: demartini/avancadev-microservice-b
+    container_name: microservice-b
+    restart: on-failure
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 9091:9091
+    environment:
+      MICROSERVICE_C_URL: microservice-c
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_HOST: rabbit
+      RABBITMQ_DEFAULT_PORT: 5672
+      RABBITMQ_DEFAULT_VHOST: /
+      RABBITMQ_CONSUMER_NAME: payment-ms
+      RABBITMQ_CONSUMER_QUEUE_NAME: orders
+      RABBITMQ_NOTIFICATION_EX: amq.direct
+      RABBITMQ_NOTIFICATION_ROUTING_KEY:
+      RABBITMQ_DLX: dlx
+    depends_on:
+      - rabbit
+
+  # @ANCHOR - AvançaDev - Microservice C
+  # https://hub.docker.com/r/demartini/avancadev-microservice-c
+  microservice-c:
+    image: demartini/avancadev-microservice-c
+    container_name: microservice-c
+    restart: on-failure
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 9092:9092
+    depends_on:
+      - rabbit
+
+volumes:
+  rabbit:
+    driver: local
